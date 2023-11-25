@@ -3,6 +3,7 @@
 #include <WiFi.h>
 #include <PubSubClient.h>
 #include <MsgPack.h>
+#include <map>
 
 #include "UUID.h"
 
@@ -23,7 +24,8 @@ namespace MosquittoHandler
 
     bool setup();
     void mosquittoTask(void *pvParameter);
-    void processMessage(char *topic, byte *payload, unsigned int length);
+    void messageCallback(char *topic, byte *payload, unsigned int length);
     void publishDeviceMAC();
     void publishInterruptData(InterruptData *data);
+    void publishPicture(String picPath);
 }

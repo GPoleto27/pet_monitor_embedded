@@ -48,6 +48,7 @@ namespace InterruptHandler
             Serial.println("Sending interrupt data");
 
             MosquittoHandler::publishInterruptData(&data);
+            MosquittoHandler::publishPicture(picPath);
 
             // TODO: Send interrupt data to server
         }

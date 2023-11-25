@@ -12,7 +12,7 @@ namespace MosquittoHandler
     bool setup()
     {
         client.setServer(MQTT_SERVER, MQTT_PORT);
-        client.setCallback(processMessage);
+        client.setCallback(messageCallback);
         return true;
     }
 
@@ -42,7 +42,7 @@ namespace MosquittoHandler
         }
     }
 
-    void processMessage(char *topic, byte *payload, unsigned int length)
+    void messageCallback(char *topic, byte *payload, unsigned int length)
     {
         Serial.print("Message arrived [");
         Serial.print(topic);
@@ -103,4 +103,19 @@ namespace MosquittoHandler
 
         client.publish((String(MAC) + "/events").c_str(), packer.data(), packer.size());
     }
+
+    void publishPicture(String picPath)
+    {
+        if (!ImageHandler::takePicture(&picPath))
+        {
+            Serial.println("Error taking picture");
+            return;
+        }
+
+        size_t size;
+        const uint8_t *buffer = ImageHandler::packPicture(picPath, &size);
+
+        client.publish((String(MAC) + "/pictures").c_str(), buffer, size);
+    }
+
 } // namespace MosquittoHandler

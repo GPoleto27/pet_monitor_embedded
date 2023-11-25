@@ -38,7 +38,7 @@ namespace ImageHandler
 		config.xclk_freq_hz = 20000000;
 		config.pixel_format = PIXFORMAT_JPEG;
 
-				if (psramFound())
+		if (psramFound())
 		{
 			config.frame_size = FRAMESIZE_UXGA; // FRAMESIZE_ + QVGA|CIF|VGA|SVGA|XGA|SXGA|UXGA
 			config.jpeg_quality = 10;
@@ -107,5 +107,33 @@ namespace ImageHandler
 
 		*picPath = path;
 		return true;
+	}
+
+	const uint8_t *packPicture(String picPath, size_t *size)
+	{
+		File file = SD_MMC.open(picPath);
+		if (!file)
+		{
+			Serial.println("Failed to open file for reading");
+			return NULL;
+		}
+
+		byte *buffer = (byte *)malloc(file.size());
+		if (!buffer)
+		{
+			Serial.println("Failed to allocate memory");
+			return NULL;
+		}
+
+		file.read(buffer, *size);
+		file.close();
+
+		MsgPack::Packer packer;
+		packer.packString32(picPath);
+		packer.packBinary(buffer, *size);
+
+		free(buffer);
+		*size = packer.size();
+		return packer.data();
 	}
 }

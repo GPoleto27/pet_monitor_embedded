@@ -1,12 +1,14 @@
 #pragma once
 
+#include <MsgPack.h>
+
 #include "esp_camera.h"
 #include "UUID.h"
-#include "FS.h"               // File system ESP32
-#include "SD_MMC.h"           // SD Card ESP32
-#include "soc/soc.h"          // Disable brownour problems
+#include "FS.h"				  // File system ESP32
+#include "SD_MMC.h"			  // SD Card ESP32
+#include "soc/soc.h"		  // Disable brownour problems
 #include "soc/rtc_cntl_reg.h" // Disable brownour problems
-#include "driver/rtc_io.h"    // Disable brownour problems
+#include "driver/rtc_io.h"	  // Disable brownour problems
 
 #include "macros.h"
 
@@ -16,4 +18,5 @@ namespace ImageHandler
 
 	bool setup();
 	bool takePicture(String *picPath);
+	const uint8_t *packPicture(String picPath, size_t *size);
 } // namespace ImageHandler
