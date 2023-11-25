@@ -2,15 +2,8 @@
 
 #include "LoadCellHandler.h"
 #include "TimestampHandler.h"
+#include "MosquittoHandler.h"
 #include "ImageHandler.h"
-
-typedef struct InterruptData
-{
-    bool presence;
-    int weightMilligrams;
-    unsigned long timestamp;
-    String imageFilename;
-} InterruptData;
 
 namespace InterruptHandler
 {
@@ -53,6 +46,8 @@ namespace InterruptHandler
 
             InterruptData data = {presence, weightMilligrams, timestamp, picPath};
             Serial.println("Sending interrupt data");
+
+            MosquittoHandler::publishInterruptData(&data);
 
             // TODO: Send interrupt data to server
         }

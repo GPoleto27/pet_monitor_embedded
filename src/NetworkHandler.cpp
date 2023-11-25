@@ -1,4 +1,5 @@
 #include "NetworkHandler.h"
+#include "PersistHandler.h"
 
 namespace NetworkHandler
 {
@@ -26,6 +27,9 @@ namespace NetworkHandler
 		Serial.println();
 		Serial.print("Connected! IP address: ");
 		Serial.println(WiFi.localIP());
+
+		PersistHandler::setDeviceMAC(WiFi.macAddress());
+
 		return true;
 	}
 

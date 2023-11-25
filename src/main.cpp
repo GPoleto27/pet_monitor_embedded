@@ -6,6 +6,7 @@
 #include "LoadCellHandler.h"
 #include "ServoHandler.h"
 #include "ImageHandler.h"
+#include "MosquittoHandler.h"
 #include "InterruptHandler.h"
 
 void setup()
@@ -39,7 +40,11 @@ void setup()
 		Serial.println("Failed to setup servo");
 		ESP.restart();
 	}
-
+	if (!MosquittoHandler::setup())
+	{
+		Serial.println("Failed to setup mosquitto");
+		ESP.restart();
+	}
 	if (!ImageHandler::setup())
 	{
 		Serial.println("Failed to setup image handler");
@@ -48,6 +53,7 @@ void setup()
 
 	xTaskCreatePinnedToCore(NetworkHandler::networkTask, "networkTask", 1024, NULL, 1, NULL, 0);
 	xTaskCreatePinnedToCore(TimestampHandler::timestampTask, "timestampTask", 1024, NULL, 1, NULL, 0);
+	xTaskCreatePinnedToCore(MosquittoHandler::mosquittoTask, "mosquittoTask", 1024, NULL, 1, NULL, 0);
 
 	// Always setup interrupt handler last, as it depends on other handlers
 	if (!InterruptHandler::setup())

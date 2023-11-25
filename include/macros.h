@@ -33,3 +33,6 @@
 
 #define SERVO_MOTOR_OPEN_ANGLE 0
 #define SERVO_MOTOR_CLOSED_ANGLE 90
+
+#define MQTT_SERVER "petmonitor"
+#define MQTT_PORT 1883
