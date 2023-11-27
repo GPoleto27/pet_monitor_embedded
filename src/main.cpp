@@ -51,22 +51,21 @@ void setup()
 		ESP.restart();
 	}
 
-	xTaskCreatePinnedToCore(NetworkHandler::networkTask, "networkTask", 1024, NULL, 1, NULL, 0);
-	xTaskCreatePinnedToCore(TimestampHandler::timestampTask, "timestampTask", 1024, NULL, 1, NULL, 0);
-	xTaskCreatePinnedToCore(MosquittoHandler::mosquittoTask, "mosquittoTask", 1024, NULL, 1, NULL, 0);
+	xTaskCreate(TimestampHandler::timestampTask, "timestampTask", 1024, NULL, 3, NULL);
+	xTaskCreate(MosquittoHandler::mosquittoTask, "mosquittoTask", 50000, NULL, 2, NULL);
 
 	// Always setup interrupt handler last, as it depends on other handlers
+	/* TODO: Make interrupt handler work
 	if (!InterruptHandler::setup())
 	{
 		Serial.println("Failed to setup interrupt handler");
 		ESP.restart();
 	}
+	*/
 }
 
 void loop()
 {
-	String picPath;
-	ImageHandler::takePicture(&picPath);
-	Serial.println(picPath);
-	delay(1000);
+	// String picPath;
+	// ImageHandler::takePicture(&picPath);
 }

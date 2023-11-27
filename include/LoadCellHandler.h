@@ -9,5 +9,5 @@ namespace LoadCellHandler
 	extern HX711 loadCell;
 
 	bool setup();
-	int getWeightMilligrams();
+	int getWeightGrams();
 } // namespace LoadCellHandler

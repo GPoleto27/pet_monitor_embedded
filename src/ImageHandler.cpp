@@ -6,8 +6,6 @@ namespace ImageHandler
 
 	bool setup()
 	{
-		WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); // disable brownout detector
-
 		uint32_t seed1 = random(999999999);
 		uint32_t seed2 = random(999999999);
 		uuid.seed(seed1, seed2);
@@ -15,6 +13,8 @@ namespace ImageHandler
 		uuid.toCharArray();
 		Serial.print("UUID Setup: ");
 		Serial.println(uuid);
+
+		WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); // disable brownout detector
 
 		camera_config_t config;
 		config.ledc_channel = LEDC_CHANNEL_0;
@@ -40,12 +40,14 @@ namespace ImageHandler
 
 		if (psramFound())
 		{
+			Serial.println("PSRAM found");
 			config.frame_size = FRAMESIZE_UXGA; // FRAMESIZE_ + QVGA|CIF|VGA|SVGA|XGA|SXGA|UXGA
 			config.jpeg_quality = 10;
 			config.fb_count = 2;
 		}
 		else
 		{
+			Serial.println("PSRAM not found");
 			config.frame_size = FRAMESIZE_SVGA;
 			config.jpeg_quality = 12;
 			config.fb_count = 1;
@@ -57,19 +59,23 @@ namespace ImageHandler
 			Serial.printf("Camera init failed with error 0x%x\n", err);
 			return false;
 		}
+		Serial.println("Camera init success");
 
 		if (!SD_MMC.begin())
 		{
 			Serial.println("SD Card Mount Failed");
 			return false;
 		}
-
 		uint8_t cardType = SD_MMC.cardType();
 		if (cardType == CARD_NONE)
 		{
 			Serial.println("No SD Card attached");
 			return false;
 		}
+		Serial.print("SD Card Type: ");
+		Serial.println(cardType == CARD_SD ? "SDSC" : cardType == CARD_SDHC ? "SDHC"
+																			: "UNKNOWN");
+
 		return true;
 	}
 
@@ -81,7 +87,6 @@ namespace ImageHandler
 		String path = "/" + String(uuid.toCharArray()) + ".jpg";
 
 		fs::FS &fs = SD_MMC;
-		Serial.printf("Picture file name: %s\n", path.c_str());
 
 		camera_fb_t *fb = NULL;
 
@@ -97,43 +102,47 @@ namespace ImageHandler
 		if (!file)
 		{
 			Serial.println("Failed to open file in writing mode");
+			file.close();
+			esp_camera_fb_return(fb);
 			return false;
 		}
 
 		file.write(fb->buf, fb->len); // payload (image), payload length
 		Serial.printf("Saved file to path: %s\n", path.c_str());
-		esp_camera_fb_return(fb);
 		file.close();
+		esp_camera_fb_return(fb);
 
 		*picPath = path;
 		return true;
 	}
 
-	const uint8_t *packPicture(String picPath, size_t *size)
+	size_t packPicture(String picPath, byte *buffer)
 	{
-		File file = SD_MMC.open(picPath);
+		Serial.printf("Packing picture: %s\n", picPath.c_str());
+
+		fs::FS &fs = SD_MMC;
+
+		File file = fs.open(picPath.c_str(), FILE_READ);
 		if (!file)
 		{
 			Serial.println("Failed to open file for reading");
-			return NULL;
+			return 0;
 		}
 
-		byte *buffer = (byte *)malloc(file.size());
-		if (!buffer)
+		String bufferString;
+
+		while (file.available())
 		{
-			Serial.println("Failed to allocate memory");
-			return NULL;
+			bufferString += (char)file.read();
 		}
 
-		file.read(buffer, *size);
 		file.close();
 
-		MsgPack::Packer packer;
-		packer.packString32(picPath);
-		packer.packBinary(buffer, *size);
+		Serial.printf("Picture size: %d\n", bufferString.length());
 
-		free(buffer);
-		*size = packer.size();
-		return packer.data();
+		buffer = (byte *)malloc(bufferString.length());
+		memcpy(buffer, bufferString.c_str(), bufferString.length());
+
+		return bufferString.length();
 	}
 }

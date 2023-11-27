@@ -35,13 +35,10 @@ namespace NetworkHandler
 
 	void networkTask(void *pvParameters)
 	{
+		Serial.println("Network task started");
 		while (true)
 		{
-			if (WiFi.status() == WL_CONNECTED)
-			{
-				Serial.println("Connected to WiFi");
-			}
-			else
+			if (WiFi.status() != WL_CONNECTED)
 			{
 				Serial.println("Disconnected from WiFi");
 				bool reconnectSuccess = connectToNetwork();
@@ -51,6 +48,7 @@ namespace NetworkHandler
 					ESP.restart();
 				}
 			}
+			vTaskDelay(1000 / portTICK_PERIOD_MS);
 		}
 	}
 }

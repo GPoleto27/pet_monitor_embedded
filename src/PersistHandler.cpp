@@ -11,7 +11,11 @@ namespace PersistHandler
 		{
 			preferences.putFloat("scale", 1.0);
 		}
+		float scale = preferences.getFloat("scale", 1.0);
 		preferences.end();
+
+		Serial.print("Load cell scale: ");
+		Serial.println(scale);
 
 		return true;
 	}

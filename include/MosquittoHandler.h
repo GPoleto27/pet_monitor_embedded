@@ -23,6 +23,7 @@ namespace MosquittoHandler
     extern PubSubClient client;
 
     bool setup();
+    void connect();
     void mosquittoTask(void *pvParameter);
     void messageCallback(char *topic, byte *payload, unsigned int length);
     void publishDeviceMAC();

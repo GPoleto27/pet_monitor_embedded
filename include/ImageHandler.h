@@ -18,5 +18,5 @@ namespace ImageHandler
 
 	bool setup();
 	bool takePicture(String *picPath);
-	const uint8_t *packPicture(String picPath, size_t *size);
+	size_t packPicture(String picPath, byte *buffer);
 } // namespace ImageHandler

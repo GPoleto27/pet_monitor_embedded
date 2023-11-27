@@ -15,7 +15,7 @@ namespace InterruptHandler
         pinMode(PRESENCE_SENSOR_PIN, INPUT_PULLUP);
         attachInterrupt(digitalPinToInterrupt(PRESENCE_SENSOR_PIN), handleInterrupt, CHANGE);
 
-        xTaskCreatePinnedToCore(interruptTask, "interruptTask", 1024, NULL, 1, &interruptTaskHandle, 0);
+        xTaskCreate(interruptTask, "interruptTask", 1024, NULL, 1, &interruptTaskHandle);
 
         return interruptTaskHandle != NULL;
     }
@@ -27,12 +27,14 @@ namespace InterruptHandler
 
     void interruptTask(void *pvParameters)
     {
+        Serial.println("Interrupt task started");
         while (true)
         {
             ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
+            Serial.println("Interrupt detected");
 
             bool presence = digitalRead(PRESENCE_SENSOR_PIN) == HIGH;
-            int weightMilligrams = LoadCellHandler::getWeightMilligrams();
+            int weightGrams = LoadCellHandler::getWeightGrams();
             unsigned long timestamp = TimestampHandler::getTimestamp();
 
             String picPath;
@@ -44,13 +46,12 @@ namespace InterruptHandler
                 continue;
             }
 
-            InterruptData data = {presence, weightMilligrams, timestamp, picPath};
+            InterruptData data = {presence, weightGrams, timestamp, picPath};
             Serial.println("Sending interrupt data");
 
+            // TODO: Send interrupt data to server
             MosquittoHandler::publishInterruptData(&data);
             MosquittoHandler::publishPicture(picPath);
-
-            // TODO: Send interrupt data to server
         }
     }
 } // namespace InterruptHandler
