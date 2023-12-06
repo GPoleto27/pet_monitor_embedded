@@ -11,6 +11,7 @@ namespace TimestampHandler
 		timeClient.update();
 		Serial.print("Current time (UTC): ");
 		Serial.println(timeClient.getFormattedTime());
+		xTaskCreate(TimestampHandler::timestampTask, "timestampTask", 9*1024, NULL, 1, NULL);
 		return true;
 	}
 
@@ -20,7 +21,7 @@ namespace TimestampHandler
 		while (true)
 		{
 			timeClient.update();
-			vTaskDelay(2000 / portTICK_PERIOD_MS);
+			vTaskDelay(pdMS_TO_TICKS(1000));
 		}
 	}
 

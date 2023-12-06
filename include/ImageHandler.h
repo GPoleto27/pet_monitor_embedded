@@ -1,7 +1,5 @@
 #pragma once
 
-#include <MsgPack.h>
-
 #include "esp_camera.h"
 #include "UUID.h"
 #include "FS.h"				  // File system ESP32
@@ -18,5 +16,4 @@ namespace ImageHandler
 
 	bool setup();
 	bool takePicture(String *picPath);
-	size_t packPicture(String picPath, byte *buffer);
 } // namespace ImageHandler

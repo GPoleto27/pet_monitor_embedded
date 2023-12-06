@@ -3,8 +3,8 @@
 #include <Arduino.h>
 #include <freertos/FreeRTOS.h>
 
-#define WIFI_SSID "Guilherme_Oesteline"
-#define WIFI_PASSWORD "naotemsenha"
+#define WIFI_SSID "petmonitor"
+#define WIFI_PASSWORD "monitorpet"
 
 // Pin definition for CAMERA_MODEL_AI_THINKER
 #define PWDN_GPIO_NUM 32
@@ -34,8 +34,7 @@
 #define SERVO_MOTOR_OPEN_ANGLE 0
 #define SERVO_MOTOR_CLOSED_ANGLE 90
 
-#define MQTT_SERVER "192.168.1.10"
-#define MQTT_PORT 1883
-#define MQTT_ID "embedded"
-#define MQTT_USER "petmonitor"
-#define MQTT_PASSWORD "monitorpet"
+#define SERVER_HOST "192.168.0.100"
+#define SERVER_PORT 5000
+
+#define configUSE_TASK_NOTIFICATIONS 1

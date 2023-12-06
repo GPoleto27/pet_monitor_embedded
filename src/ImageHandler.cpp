@@ -115,34 +115,4 @@ namespace ImageHandler
 		*picPath = path;
 		return true;
 	}
-
-	size_t packPicture(String picPath, byte *buffer)
-	{
-		Serial.printf("Packing picture: %s\n", picPath.c_str());
-
-		fs::FS &fs = SD_MMC;
-
-		File file = fs.open(picPath.c_str(), FILE_READ);
-		if (!file)
-		{
-			Serial.println("Failed to open file for reading");
-			return 0;
-		}
-
-		String bufferString;
-
-		while (file.available())
-		{
-			bufferString += (char)file.read();
-		}
-
-		file.close();
-
-		Serial.printf("Picture size: %d\n", bufferString.length());
-
-		buffer = (byte *)malloc(bufferString.length());
-		memcpy(buffer, bufferString.c_str(), bufferString.length());
-
-		return bufferString.length();
-	}
 }
