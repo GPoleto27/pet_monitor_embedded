@@ -30,11 +30,14 @@ void setup()
 		ESP.restart();
 	}
 	// Always setup persist before load cell as it need to load scale from persist
+	// LOADCELL NOT WORKING WITH esp_camera_init
+	/*
 	if (!LoadCellHandler::setup())
 	{
 		Serial.println("Failed to setup load cell");
 		ESP.restart();
 	}
+	*/
 	if (!ServoHandler::setup())
 	{
 		Serial.println("Failed to setup servo");
@@ -51,18 +54,19 @@ void setup()
 		ESP.restart();
 	}
 	// Always setup interrupt handler last, as it depends on other handlers
-	/*
 	if (!InterruptHandler::setup())
 	{
 		Serial.println("Failed to setup interrupt handler");
 		ESP.restart();
 	}
-	*/
+
+	/*
 	if (!TestHandler::setup())
 	{
 		Serial.println("Failed to setup test handler");
 		ESP.restart();
 	}
+	*/
 }
 
 void loop() {}
