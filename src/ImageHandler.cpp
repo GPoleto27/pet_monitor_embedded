@@ -73,8 +73,9 @@ namespace ImageHandler
 			return false;
 		}
 		Serial.print("SD Card Type: ");
-		Serial.println(cardType == CARD_SD ? "SDSC" : cardType == CARD_SDHC ? "SDHC"
-																			: "UNKNOWN");
+		Serial.println(cardType == CARD_SD	   ? "SDSC"
+					   : cardType == CARD_SDHC ? "SDHC"
+											   : "UNKNOWN");
 
 		return true;
 	}

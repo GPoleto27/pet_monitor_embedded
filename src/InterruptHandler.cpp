@@ -51,7 +51,6 @@ namespace InterruptHandler
     void interruptTask(void *pvParameters)
     {
         Serial.println("Interrupt task started");
-        bool lastState = false;
         while (true)
         {
             // wait for interrupt

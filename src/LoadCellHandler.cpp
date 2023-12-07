@@ -42,7 +42,6 @@ namespace LoadCellHandler
 
 	int getWeightGrams()
 	{
-		// Convert Kg to g
 		return (int)loadCell.get_units(10);
 	}
 } // namespace LoadCellHandler

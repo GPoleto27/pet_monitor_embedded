@@ -30,6 +30,7 @@ void setup()
 		ESP.restart();
 	}
 	// Always setup persist before load cell as it need to load scale from persist
+	// LOADCELL NOT WORKING WITH esp_camera_init
 	/*
 	if (!LoadCellHandler::setup())
 	{

@@ -4,7 +4,6 @@ namespace NetworkHandler
 {
 	bool setup()
 	{
-
 		if (!connectToNetwork())
 		{
 			Serial.println("Failed to connect to WiFi");
