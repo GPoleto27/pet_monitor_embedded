@@ -61,6 +61,7 @@ namespace InterruptHandler
             if (!ServerHandler::sendAllData())
             {
                 Serial.println("Failed to send interrupt data");
+                ulTaskNotifyTake(pdTRUE, 0);
                 continue;
             }
             Serial.println("Interrupt data sent");
