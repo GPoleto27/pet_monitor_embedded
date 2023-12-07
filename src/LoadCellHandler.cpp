@@ -13,7 +13,7 @@ namespace LoadCellHandler
 		loadCell.set_scale(loadCellScale);
 		// loadCell.tare();
 		Serial.println("Tare: 1000");
-		// Serial.println(loadCell.get_units());
+		// Serial.printf("Tare: %f\n", loadCell.get_units());
 		return true;
 	}
 

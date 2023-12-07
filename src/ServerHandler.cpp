@@ -23,7 +23,8 @@ namespace ServerHandler
 
     bool sendImage(String picPath)
     {
-        File file = SD_MMC.open(picPath, FILE_READ);
+        String path = "/" + picPath;
+        File file = SD_MMC.open(path, FILE_READ);
         if (!file)
         {
             Serial.println("Failed to open file in reading mode");
@@ -63,7 +64,7 @@ namespace ServerHandler
         http.begin(SERVER_HOST, SERVER_PORT, "/event");
         // post as form
         http.addHeader("Content-Type", "application/x-www-form-urlencoded");
-        String body = "presence=" + String(presence) + "&weight=" + String(weightGrams) + "&timestamp=" + String(timestamp) + "&image=" + picPath;
+        String body = "type=" + String(presence) + "&weight=" + String(weightGrams) + "&timestamp=" + String(timestamp) + "&image=" + picPath;
         int httpCode = http.POST(body);
 
         if (httpCode > 0)

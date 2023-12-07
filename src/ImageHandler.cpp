@@ -81,13 +81,6 @@ namespace ImageHandler
 
 	bool takePicture(String *picPath)
 	{
-		// Path where new picture will be saved in SD Card
-		uuid.generate();
-
-		String path = "/" + String(uuid.toCharArray()) + ".jpg";
-
-		fs::FS &fs = SD_MMC;
-
 		camera_fb_t *fb = NULL;
 
 		// Take Picture with Camera
@@ -97,6 +90,14 @@ namespace ImageHandler
 			Serial.println("Camera capture failed");
 			return false;
 		}
+
+		// Path where new picture will be saved in SD Card
+		uuid.generate();
+
+		*picPath = String(uuid.toCharArray()) + ".jpg";
+		String path = "/" + *picPath;
+
+		fs::FS &fs = SD_MMC;
 
 		File file = fs.open(path.c_str(), FILE_WRITE);
 		if (!file)
@@ -112,7 +113,6 @@ namespace ImageHandler
 		file.close();
 		esp_camera_fb_return(fb);
 
-		*picPath = path;
 		return true;
 	}
 }

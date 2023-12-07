@@ -6,6 +6,7 @@
 #include "ImageHandler.h"
 #include "ServerHandler.h"
 #include "InterruptHandler.h"
+#include "TestHandler.h"
 #include "macros.h"
 
 void setup()
@@ -50,9 +51,16 @@ void setup()
 		ESP.restart();
 	}
 	// Always setup interrupt handler last, as it depends on other handlers
+	/*
 	if (!InterruptHandler::setup())
 	{
 		Serial.println("Failed to setup interrupt handler");
+		ESP.restart();
+	}
+	*/
+	if (!TestHandler::setup())
+	{
+		Serial.println("Failed to setup test handler");
 		ESP.restart();
 	}
 }
