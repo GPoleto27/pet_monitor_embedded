@@ -57,6 +57,7 @@ namespace NetworkHandler
 			// print stack size
 			Serial.print("Network task stack size: ");
 			Serial.println(uxTaskGetStackHighWaterMark(NULL));
+
 			vTaskDelay(1000 / portTICK_PERIOD_MS);
 		}
 	}
