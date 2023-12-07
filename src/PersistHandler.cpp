@@ -11,12 +11,16 @@ namespace PersistHandler
 		{
 			preferences.putFloat("scale", 1.0);
 		}
+		float scale = preferences.getFloat("scale", 1.0);
 		preferences.end();
+
+		Serial.print("Load cell scale: ");
+		Serial.println(scale);
 
 		return true;
 	}
 
-	void persistLoadCellScale(float scale)
+	void setLoadCellScale(float scale)
 	{
 		preferences.begin("loadCell", false);
 		preferences.putFloat("scale", scale);
@@ -30,5 +34,23 @@ namespace PersistHandler
 		preferences.end();
 
 		return scale;
+	}
+
+	bool setDeviceMAC(String mac)
+	{
+		preferences.begin("device", false);
+		preferences.putString("MAC", mac);
+		preferences.end();
+
+		return true;
+	}
+
+	String deviceMAC()
+	{
+		preferences.begin("device", true);
+		String mac = preferences.getString("mac", "");
+		preferences.end();
+
+		return mac;
 	}
 } // namespace PersistHandler

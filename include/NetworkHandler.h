@@ -2,6 +2,7 @@
 
 #include <WiFi.h>
 
+#include "PersistHandler.h"
 #include "macros.h"
 
 namespace NetworkHandler

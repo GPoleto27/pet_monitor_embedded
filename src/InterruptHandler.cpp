@@ -1,60 +1,41 @@
 #include "InterruptHandler.h"
 
-#include "LoadCellHandler.h"
-#include "TimestampHandler.h"
-#include "ImageHandler.h"
-
-typedef struct InterruptData
-{
-    bool presence;
-    int weightMilligrams;
-    unsigned long timestamp;
-    String imageFilename;
-} InterruptData;
-
 namespace InterruptHandler
 {
-    // Task handler
-    TaskHandle_t interruptTaskHandle = NULL;
 
     bool setup()
     {
+        Serial.println("Setting up pin mode");
         pinMode(PRESENCE_SENSOR_PIN, INPUT_PULLUP);
-        attachInterrupt(digitalPinToInterrupt(PRESENCE_SENSOR_PIN), handleInterrupt, CHANGE);
 
-        xTaskCreatePinnedToCore(interruptTask, "interruptTask", 1024, NULL, 1, &interruptTaskHandle, 0);
-
-        return interruptTaskHandle != NULL;
-    }
-
-    void IRAM_ATTR handleInterrupt()
-    {
-        xTaskNotifyFromISR(interruptTaskHandle, 0, eNoAction, NULL);
+        Serial.println("Creating interrupt task");
+        xTaskCreate(interruptTask, "Interrupt task", 1024, NULL, 1, NULL);
+        return true;
     }
 
     void interruptTask(void *pvParameters)
     {
+        Serial.println("Interrupt task started");
         while (true)
         {
-            ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
-
-            bool presence = digitalRead(PRESENCE_SENSOR_PIN) == HIGH;
-            int weightMilligrams = LoadCellHandler::getWeightMilligrams();
-            unsigned long timestamp = TimestampHandler::getTimestamp();
-
-            String picPath;
-            bool success = ImageHandler::takePicture(&picPath);
-
-            if (!success)
+            if (digitalRead(PRESENCE_SENSOR_PIN) == HIGH)
             {
-                Serial.println("Failed to take picture");
+                vTaskDelay(100 / portTICK_PERIOD_MS);
                 continue;
             }
 
-            InterruptData data = {presence, weightMilligrams, timestamp, picPath};
-            Serial.println("Sending interrupt data");
+            // wait for interrupt
+            Serial.println("Interrupt detected");
 
-            // TODO: Send interrupt data to server
+            if (!ServerHandler::sendAllData())
+            {
+                Serial.println("Failed to send interrupt data");
+                continue;
+            }
+
+            Serial.println("Interrupt data sent");
+
+            vTaskDelay(1000 / portTICK_PERIOD_MS);
         }
     }
 } // namespace InterruptHandler

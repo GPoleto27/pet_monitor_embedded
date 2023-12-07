@@ -9,6 +9,8 @@ namespace PersistHandler
 	extern Preferences preferences;
 
 	bool setup();
-	void persistLoadCellScale(float scale);
+	void setLoadCellScale(float scale);
 	float loadCellScale();
+	bool setDeviceMAC(String mac);
+	String deviceUUID();
 } // namespace PersistHandler

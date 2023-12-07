@@ -8,6 +8,7 @@ namespace ServoHandler
     {
         servo.attach(SERVO_MOTOR_PIN);
         servo.write(SERVO_MOTOR_CLOSED_ANGLE);
+        Serial.println("Servo motor setup");
         return true;
     }
 

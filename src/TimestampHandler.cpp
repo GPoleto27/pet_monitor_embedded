@@ -9,21 +9,25 @@ namespace TimestampHandler
 	{
 		timeClient.begin();
 		timeClient.update();
+		Serial.print("Current time (UTC): ");
+		Serial.println(timeClient.getFormattedTime());
+		xTaskCreate(TimestampHandler::timestampTask, "timestampTask", 9*1024, NULL, 1, NULL);
 		return true;
 	}
 
 	void timestampTask(void *pvParameters)
 	{
-		TickType_t xLastWakeTime = xTaskGetTickCount();
+		Serial.println("Timestamp task started");
 		while (true)
 		{
 			timeClient.update();
-			vTaskDelayUntil(&xLastWakeTime, 1000 / portTICK_PERIOD_MS);
+			vTaskDelay(pdMS_TO_TICKS(1000));
 		}
 	}
 
 	unsigned long getTimestamp()
 	{
-		return timeClient.getEpochTime();
+		// UTC-3
+		return timeClient.getEpochTime() - 3 * 60 * 60;
 	}
 } // namespace TimestampHandler

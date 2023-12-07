@@ -4,7 +4,14 @@ namespace NetworkHandler
 {
 	bool setup()
 	{
-		return connectToNetwork();
+
+		if (!connectToNetwork())
+		{
+			Serial.println("Failed to connect to WiFi");
+			return false;
+		}
+		// xTaskCreate(NetworkHandler::networkTask, "networkTask", 1024, NULL, 1, NULL);
+		return true;
 	}
 
 	bool connectToNetwork()
@@ -26,18 +33,18 @@ namespace NetworkHandler
 		Serial.println();
 		Serial.print("Connected! IP address: ");
 		Serial.println(WiFi.localIP());
+
+		PersistHandler::setDeviceMAC(WiFi.macAddress());
+
 		return true;
 	}
 
 	void networkTask(void *pvParameters)
 	{
+		Serial.println("Network task started");
 		while (true)
 		{
-			if (WiFi.status() == WL_CONNECTED)
-			{
-				Serial.println("Connected to WiFi");
-			}
-			else
+			if (WiFi.status() != WL_CONNECTED)
 			{
 				Serial.println("Disconnected from WiFi");
 				bool reconnectSuccess = connectToNetwork();
@@ -47,6 +54,10 @@ namespace NetworkHandler
 					ESP.restart();
 				}
 			}
+			// print stack size
+			Serial.print("Network task stack size: ");
+			Serial.println(uxTaskGetStackHighWaterMark(NULL));
+			vTaskDelay(1000 / portTICK_PERIOD_MS);
 		}
 	}
 }

@@ -1,12 +1,13 @@
-#include "macros.h"
-
 #include "NetworkHandler.h"
 #include "TimestampHandler.h"
 #include "PersistHandler.h"
 #include "LoadCellHandler.h"
 #include "ServoHandler.h"
 #include "ImageHandler.h"
+#include "ServerHandler.h"
 #include "InterruptHandler.h"
+#include "TestHandler.h"
+#include "macros.h"
 
 void setup()
 {
@@ -39,28 +40,29 @@ void setup()
 		Serial.println("Failed to setup servo");
 		ESP.restart();
 	}
-
 	if (!ImageHandler::setup())
 	{
 		Serial.println("Failed to setup image handler");
 		ESP.restart();
 	}
-
-	xTaskCreatePinnedToCore(NetworkHandler::networkTask, "networkTask", 1024, NULL, 1, NULL, 0);
-	xTaskCreatePinnedToCore(TimestampHandler::timestampTask, "timestampTask", 1024, NULL, 1, NULL, 0);
-
+	if (!ServerHandler::setup())
+	{
+		Serial.println("Failed to setup server handler");
+		ESP.restart();
+	}
 	// Always setup interrupt handler last, as it depends on other handlers
+	/*
 	if (!InterruptHandler::setup())
 	{
 		Serial.println("Failed to setup interrupt handler");
 		ESP.restart();
 	}
+	*/
+	if (!TestHandler::setup())
+	{
+		Serial.println("Failed to setup test handler");
+		ESP.restart();
+	}
 }
 
-void loop()
-{
-	String picPath;
-	ImageHandler::takePicture(&picPath);
-	Serial.println(picPath);
-	delay(1000);
-}
+void loop() {}
